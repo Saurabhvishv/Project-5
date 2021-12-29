@@ -4,6 +4,8 @@ const mongoose = require("mongoose")
 // const { findOneAndUpdate } = require("../models/productModel")
 
 
+
+
 const isValid = function (value) {
     if (typeof value === 'undefined' || value === null) return false
     if (typeof value === 'string' && value.trim().length === 0) return false
@@ -263,7 +265,7 @@ const deleteProduct = async function(req,res){
            return  res.status(400).send({status: false, msg: "The given ProductId is invalid"})
         }
         let fAndUp = await ProductModel.findOneAndUpdate({_id: dParam, isDeleted: false},
-             {isDeleted: true}, {new: true})
+             {isDeleted: true,deletedAt: Date.now()}, {new: true})
         if(!fAndUp){
             return res.status(404).send({status: false, msg: "Product does not exist"})
         }else{
