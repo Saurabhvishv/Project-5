@@ -147,18 +147,13 @@ const updateCart = async function(req,res){
     }
         if(removeProduct == 0){
             
-            // let deleteProduct = await cartModel.find({_id: cartId,items:{$elemMatch:{_id : "61cabd1383e21cc2539407d8"}}}).remove()
+     
         let deleteProduct = await cartModel.findOneAndUpdate({_id: cartId},
                  {items: updateItems, totalPrice: totalPriceop, totalItems: totalqtyp}, {new: true})
-        // let deleteProduct = cartModel.findOneAndUpdate( { _id:cartId}, { $pull: { items: [{ productId: productId }] } } )
+        
            return  res.status(200).send({status: true, data: deleteProduct})
         }
-        // if(removeProduct == 1){
-        //     // let qtyDec = await cartModel
-        //     let decreaseQty = await cartModel.findOneAndUpdate({_id: cartId, "items.$.productId": productId},
-        //         {$inc:{"items.$.quantity": -1, totalItems: -1}}, {new: true})
-        //         return res.status(400).send({status: true, msg: "qty decreased", data: decreaseQty})
-        // }
+       
 
     }catch(err){
         res.status(500).send({status: false, msg: err.message})
