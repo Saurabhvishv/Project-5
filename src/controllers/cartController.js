@@ -17,8 +17,7 @@ const isValidrequestBody = function (requestBody) {
 const validObject = function (value) {
     return mongoose.Types.ObjectId.isValid(value)
 }
-// testing123
-// testing again
+
 const createCart = async function(req,res){
     try{ 
         if(req.user.userId != req.params.userId ){
@@ -75,7 +74,7 @@ const createCart = async function(req,res){
              let price = pricearr.reduce((pv,cv)=> pv+cv)
              let qty = qtyarr.reduce((pv,cv)=> pv+cv)
              console.log("from else")
-             let cart = {userId: userId, items: items[0], totalPrice: price, totalItems: qty}
+             let cart = {userId: userId, items: items[0], totalPrice: price, totalItems: qty, id:_id}
              let create = await cartModel.create(cart)
           return res.status(201).send({status: true, msg: "success", data: cart})
         }

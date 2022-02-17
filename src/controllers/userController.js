@@ -235,13 +235,13 @@ const UpdateUser = async function (req, res) {
             res.status(400).send({ status: false, message: `${userId} is invalid` })
             return
         }
-        const userFound = await UserModel.findOne({ _id: userId})
+        const userFound = await UserModel.findOne({ _id: userId })
         if (!userFound) {
             return res.status(404).send({ status: false, message: `User do not exists` })
         }
         //Authorisation
-        if(userId.toString()!== req.user.userId) {
-            res.status(401).send({status: false, message: `Unauthorized access! Owner info doesn't match`});
+        if (userId.toString() !== req.user.userId) {
+            res.status(401).send({ status: false, message: `Unauthorized access! Owner info doesn't match` });
             return
         }
         if (!isValidrequestBody(requestBody)) {
@@ -249,120 +249,120 @@ const UpdateUser = async function (req, res) {
             return
         }
         // destructuring the body
-        let { fname, lname, email, phone, password, address} = requestBody;
+        let { fname, lname, email, phone, password, address } = requestBody;
         let updateUserData = {}
-        if(isValid(fname)){
+        if (isValid(fname)) {
             updateUserData['fname'] = fname
         }
-        if(isValid(lname)){
+        if (isValid(lname)) {
             updateUserData['lname'] = lname
         }
-        if(isValid(email)){
+        if (isValid(email)) {
             if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.trim()))) {
                 res.status(400).send({ status: false, message: `Email should be a valid email address` })
             }
-            const duplicateEmail = await UserModel.find({email: email}) 
-            if(duplicateEmail.length){
-                res.status(400).send({status: false, message: 'email already exists'})
+            const duplicateEmail = await UserModel.find({ email: email })
+            if (duplicateEmail.length) {
+                res.status(400).send({ status: false, message: 'email already exists' })
             }
-          updateUserData['email'] = email
+            updateUserData['email'] = email
         }
-        if(isValid(phone)){
+        if (isValid(phone)) {
             if (!(/^(1\s|1|)?((\(\d{3}\))|\d{3})(\-|\s)?(\d{3})(\-|\s)?(\d{4})$/.test(phone.trim()))) {
                 res.status(400).send({ status: false, message: `Please provide valid phone number` })
             }
-            const duplicatePhone = await UserModel.find({phone: phone}) 
-            if(duplicatePhone.length){
-                res.status(400).send({status: false, message: 'phone already exists'})
+            const duplicatePhone = await UserModel.find({ phone: phone })
+            if (duplicatePhone.length) {
+                res.status(400).send({ status: false, message: 'phone already exists' })
             }
-          updateUserData['phone']=phone
+            updateUserData['phone'] = phone
         }
-        if(isValid(password)){
-          const encrypt = await bcrypt.hash(password, 10)
-          updateUserData['password']=encrypt
+        if (isValid(password)) {
+            const encrypt = await bcrypt.hash(password, 10)
+            updateUserData['password'] = encrypt
         }
         if (address) {
-          if (address.shipping) {
-              if (address.shipping.street) {
-                  if (!isValid(address.shipping.street)) {
-                      return res.status(400).send({ status: false, message: 'Please provide street to update' })
-                  }
-                  updateUserData['address.shipping.street'] = address.shipping.street
-              }
-              if (address.shipping.city) {
-                  if (!isValid(address.shipping.city)) {
-                      return res.status(400).send({ status: false, message: 'Please provide city name to update' })
-                  }
-                  updateUserData['address.shipping.city'] = address.shipping.city
-              }
-              if (address.shipping.pincode) {
-                  if (typeof address.shipping.pincode !== 'number'){
-                      return res.status(400).send({ status: false, message: 'Please provide pincode to update' })
-                  }
-                  updateUserData['address.shipping.pincode'] = address.shipping.pincode
-              }
-          }
-          if (address.billing) {
-            if (address.billing.street) {
-                if (!isValid(address.billing.street)) {
-                    return res.status(400).send({ status: false, message: 'Please provide street to update' })
+            if (address.shipping) {
+                if (address.shipping.street) {
+                    if (!isValid(address.shipping.street)) {
+                        return res.status(400).send({ status: false, message: 'Please provide street to update' })
+                    }
+                    updateUserData['address.shipping.street'] = address.shipping.street
                 }
-                updateUserData['address.billing.street'] = address.billing.street
+                if (address.shipping.city) {
+                    if (!isValid(address.shipping.city)) {
+                        return res.status(400).send({ status: false, message: 'Please provide city name to update' })
+                    }
+                    updateUserData['address.shipping.city'] = address.shipping.city
+                }
+                if (address.shipping.pincode) {
+                    if (typeof address.shipping.pincode !== 'number') {
+                        return res.status(400).send({ status: false, message: 'Please provide pincode to update' })
+                    }
+                    updateUserData['address.shipping.pincode'] = address.shipping.pincode
+                }
             }
-            if (address.billing.city) {
-                if (!isValid(address.billing.city)) {
-                    return res.status(400).send({ status: false, message: 'Please provide city to update' })
+            if (address.billing) {
+                if (address.billing.street) {
+                    if (!isValid(address.billing.street)) {
+                        return res.status(400).send({ status: false, message: 'Please provide street to update' })
+                    }
+                    updateUserData['address.billing.street'] = address.billing.street
                 }
-                updateUserData['address.billing.city'] = address.billing.city
-            }
-            if (address.billing.pincode) {
-                if (typeof address.billing.pincode !== 'number') {
-                    return res.status(400).send({ status: false, message: 'Please provide pincode to update' })
+                if (address.billing.city) {
+                    if (!isValid(address.billing.city)) {
+                        return res.status(400).send({ status: false, message: 'Please provide city to update' })
+                    }
+                    updateUserData['address.billing.city'] = address.billing.city
                 }
-                updateUserData['address.billing.pincode'] = address.billing.pincode
+                if (address.billing.pincode) {
+                    if (typeof address.billing.pincode !== 'number') {
+                        return res.status(400).send({ status: false, message: 'Please provide pincode to update' })
+                    }
+                    updateUserData['address.billing.pincode'] = address.billing.pincode
+                }
             }
         }
-    } 
-    aws.config.update({
-        accessKeyId: "AKIAY3L35MCRRMC6253G",  // id
-        secretAccessKey: "88NOFLHQrap/1G2LqUy9YkFbFRe/GNERsCyKvTZA",  // like your secret password
-        region: "ap-south-1" // Mumbai region
-    });
-    // this function uploads file to AWS and gives back the url for the file
-    let uploadFile = async (file) => {
-        return new Promise(function (resolve, reject) { // exactly 
-            // Create S3 service object
-            let s3 = new aws.S3({ apiVersion: "2006-03-01" });
-            var uploadParams = {
-                ACL: "public-read", // this file is publically readable
-                Bucket: "classroom-training-bucket", // HERE
-                Key: "pk_newFolder/profileimages" + file.originalname, // HERE    "pk_newFolder/harry-potter.png" pk_newFolder/harry-potter.png
-                Body: file.buffer,
-            };
-            // Callback - function provided as the second parameter ( most oftenly)
-            s3.upload(uploadParams, function (err, data) {
-                if (err) {
-                    return reject({ "error": err });
-                }
-                console.log(data)
-                console.log(`File uploaded successfully. ${data.Location}`);
-                return resolve(data.Location); //HERE 
-            });
+        aws.config.update({
+            accessKeyId: "AKIAY3L35MCRRMC6253G",  // id
+            secretAccessKey: "88NOFLHQrap/1G2LqUy9YkFbFRe/GNERsCyKvTZA",  // like your secret password
+            region: "ap-south-1" // Mumbai region
         });
-    };
-    let files = req.files;
-    if (files && files.length > 0) {
-       let uploadedFileURL = await uploadFile(files[0]);
-       if(uploadedFileURL){
-        updateUserData['profileImage']=uploadedFileURL
-    }
-}
-const updatedUserData = await UserModel.findOneAndUpdate({ _id: userId },updateUserData,{new:true})
-res.status(201).send({ status: true, data: updatedUserData })
+        // this function uploads file to AWS and gives back the url for the file
+        let uploadFile = async (file) => {
+            return new Promise(function (resolve, reject) { // exactly 
+                // Create S3 service object
+                let s3 = new aws.S3({ apiVersion: "2006-03-01" });
+                var uploadParams = {
+                    ACL: "public-read", // this file is publically readable
+                    Bucket: "classroom-training-bucket", // HERE
+                    Key: "pk_newFolder/profileimages" + file.originalname, // HERE    "pk_newFolder/harry-potter.png" pk_newFolder/harry-potter.png
+                    Body: file.buffer,
+                };
+                // Callback - function provided as the second parameter ( most oftenly)
+                s3.upload(uploadParams, function (err, data) {
+                    if (err) {
+                        return reject({ "error": err });
+                    }
+                    console.log(data)
+                    console.log(`File uploaded successfully. ${data.Location}`);
+                    return resolve(data.Location); //HERE 
+                });
+            });
+        };
+        let files = req.files;
+        if (files && files.length > 0) {
+            let uploadedFileURL = await uploadFile(files[0]);
+            if (uploadedFileURL) {
+                updateUserData['profileImage'] = uploadedFileURL
+            }
+        }
+        const updatedUserData = await UserModel.findOneAndUpdate({ _id: userId }, updateUserData, { new: true })
+        res.status(201).send({ status: true, data: updatedUserData })
     } catch (error) {
         res.status(500).send({ status: false, msg: error.message });
     }
-  }
+}
 
 
 module.exports.registerUser = registerUser

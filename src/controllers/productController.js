@@ -171,10 +171,6 @@ const GetWithProductId = async function (req, res) {
         } else {
             return res.status(400).send({ status: false, msg: `No product found with productId ${pid}` })
         }
-
-
-
-
     } catch (err) {
         res.status(500).send({ status: false, msg: err.message })
     }

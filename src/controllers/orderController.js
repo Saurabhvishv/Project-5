@@ -36,8 +36,9 @@ const createOrder = async function(req,res){
             return res.status(400).send({status: false, msg: `The cart of user ${userId} does not exist`})
         }
         let order = {userId: userId, items: checkCart.items,
-             totalPrice: checkCart.totalPrice,totalItems: checkCart.totalItems,
-              totalQuantity: checkCart.totalItems, 
+             totalPrice: checkCart.totalPrice,
+             totalItems: checkCart.totalItems,
+             totalQuantity: checkCart.totalItems, 
             cancellable: cancellable, status: status}
         let orderCreate = await orderModel.create(order) 
         res.status(201).send({status: true, msg: "Success", data: orderCreate})
